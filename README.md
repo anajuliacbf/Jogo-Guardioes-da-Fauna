@@ -1,4 +1,4 @@
-Guardiões da Fauna, jogo criado para o projeto da disciplina Projeto de Aprendizagem Colaborativa Extensionista - PAV IV do 4° Semestre do Curso de Engenharia de Software da Católica SC.<br>
+Guardiões da Fauna é um jogo criado para o projeto da disciplina Projeto de Aprendizagem Colaborativa Extensionista - PAV IV do 4° Semestre do Curso de Engenharia de Software da Católica SC.<br>
 
 Desenvolvido por mim e pela minha equipe: Guilherme, João Pedro e Maik.<br>
 
