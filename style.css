@@ -1,3 +1,0 @@
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;display:flex;justify-content:center;align-items:center;height:100vh;overflow:hidden}
-canvas{image-rendering:pixelated;image-rendering:crisp-edges;border:3px solid #1a3a1a;box-shadow:0 0 40px rgba(0,80,0,0.8)}
