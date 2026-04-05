@@ -70,6 +70,21 @@ function startGame(biomeKey) {
   document.getElementById('gameover-overlay').classList.add('hidden');
   document.getElementById('pause-overlay').classList.add('hidden');
   document.getElementById('animal-card').classList.add('hidden');
+  document.getElementById('exit-hint').classList.add('hidden');
+
+  // Reset missão
+  const objectiveProgress = document.getElementById('objective-progress');
+  const objectiveStatus = document.getElementById('objective-status');
+  const missionText = document.getElementById('mission-text');
+
+  if (objectiveProgress) objectiveProgress.textContent = '0/0';
+  if (objectiveStatus) {
+    objectiveStatus.textContent = 'EM ANDAMENTO';
+    objectiveStatus.classList.remove('ready', 'done');
+  }
+  if (missionText) {
+    missionText.textContent = 'Catalogue todos os animais e alcance a saída.';
+  }
 }
 
 // ── GAME CONTROLS (called from HTML) ─────────────────────────
@@ -91,7 +106,11 @@ function closeCard() {
 
 function restartGame() {
   document.getElementById('gameover-overlay').classList.add('hidden');
-  if (currentBiome) startGame(currentBiome);
+
+  if (currentBiome) {
+    STATE.resetBiomeCatalog(currentBiome);
+    startGame(currentBiome);
+  }
 }
 
 // ── BESTIARY ─────────────────────────────────────────────────
