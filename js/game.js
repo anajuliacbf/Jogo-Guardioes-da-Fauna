@@ -49,6 +49,16 @@ class Game {
     // Player
     this.player = new Player(80, 100, this);
 
+    this.checkpoint = {
+    x: this.player.x,
+    y: this.player.y
+  };
+
+    this.checkpoint = {
+      x: this.player.x,
+      y: this.player.y
+    };
+
     // Animals
     this.animals = this._spawnAnimals();
 
@@ -320,6 +330,17 @@ class Game {
     this.tick++;
 
     this.player.update(this.keys);
+
+  if (this.player.onGround && this.player.x > this.checkpoint.x) {
+    this.checkpoint.x = this.player.x;
+    this.checkpoint.y = this.player.y;
+  }
+
+    // Atualiza checkpoint conforme avança
+    if (this.player.x > this.checkpoint.x && this.player.onGround) {
+      this.checkpoint.x = this.player.x;
+      this.checkpoint.y = this.player.y;
+    }
     this.robots.forEach(r => r.update());
     this.animals.forEach(a => a.update());
     this._updateParticles();
@@ -376,15 +397,26 @@ class Game {
   }
 
   hurtPlayer() {
-    if (this.invincible > 0) return;
-    this.lives--;
-    this.invincible = 90;
-    this._spawnParticles(this.player.x + 12, this.player.y, '#e53935', 16);
+  if (this.invincible > 0) return;
+
+  this.lives--;
+  this.invincible = 90;
+
+  this._spawnParticles(this.player.x + 12, this.player.y, '#e53935', 16);
+
+  if (this.lives <= 0) {
     this._updateHUD();
-    if (this.lives <= 0) {
-      setTimeout(() => this._gameOver(), 400);
-    }
+    setTimeout(() => this._gameOver(), 400);
+    return;
   }
+
+  this.player.x = this.checkpoint.x;
+  this.player.y = this.checkpoint.y;
+  this.player.vx = 0;
+  this.player.vy = 0;
+
+  this._updateHUD();
+}
 
   _gameOver() {
     this.stop();
@@ -721,9 +753,8 @@ class Player {
 
     // Fall off world
     if (this.y > 700) {
-      this.y = 100;
-      this.vy = 0;
       this.game.hurtPlayer();
+      return;
     }
 
     // Robot collisions
