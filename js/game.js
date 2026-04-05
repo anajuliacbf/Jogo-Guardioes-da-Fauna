@@ -14,8 +14,9 @@ class Game {
     this.raf     = null;
     this.tick    = 0;
 
+    this._resizeFn = () => this.resize();
     this.resize();
-    window.addEventListener('resize', () => this.resize());
+    window.addEventListener('resize', this._resizeFn);
 
     this.initLevel();
     this.initInput();
@@ -65,6 +66,13 @@ class Game {
     this.binocularOn  = false;
     this.binocularTimer = 0;
     this.levelDone    = false;
+    this.exitUnlocked = false;
+    this.exitGate = {
+      x: this.levelW - 160,
+      y: 600 - GAME_CONFIG.TILE * 5,
+      w: 52,
+      h: 72
+    };
 
     this._updateHUD();
   }
@@ -248,6 +256,23 @@ class Game {
     const ft = document.getElementById('fauna-total');
     if (fc) fc.textContent = this.cataloged;
     if (ft) ft.textContent = this.totalAnimals;
+    const op = document.getElementById('objective-progress');
+    if (op) op.textContent = `${this.cataloged}/${this.totalAnimals}`;
+
+    const os = document.getElementById('objective-status');
+    if (os) {
+      if (this.levelDone) {
+        os.textContent = 'CONCLUÍDA';
+        os.classList.add('done');
+        os.classList.remove('ready');
+      } else if (this.exitUnlocked) {
+        os.textContent = 'VÁ ATÉ A SAÍDA';
+        os.classList.add('ready');
+      } else {
+        os.textContent = 'EM ANDAMENTO';
+        os.classList.remove('ready', 'done');
+      }
+    }
     // Minimap player position
     const mp = document.getElementById('minimap-player');
     if (mp) {
@@ -312,10 +337,19 @@ class Game {
     // Invincibility frames
     if (this.invincible > 0) this.invincible--;
 
-    // Win condition
-    if (this.cataloged >= this.totalAnimals && !this.levelDone) {
+    // Libera a saída quando todos os animais forem catalogados
+    if (this.cataloged >= this.totalAnimals) {
+      this.exitUnlocked = true;
+      const hint = document.getElementById('exit-hint');
+      if (hint) hint.classList.remove('hidden');
+    }
+
+    // Vitória só acontece ao alcançar a saída
+    if (this.exitUnlocked && !this.levelDone && this._playerReachedExit()) {
       this.levelDone = true;
-      setTimeout(() => this._winLevel(), 1200);
+      const hint = document.getElementById('exit-hint');
+      if (hint) hint.classList.add('hidden');
+      setTimeout(() => this._winLevel(), 500);
     }
 
     this._updateHUD();
@@ -329,6 +363,16 @@ class Game {
       p.life--;
       return p.life > 0;
     });
+  }
+  _playerReachedExit() {
+    const p = this.player;
+    const e = this.exitGate;
+    return (
+      p.x < e.x + e.w &&
+      p.x + p.w > e.x &&
+      p.y < e.y + e.h &&
+      p.y + p.h > e.y
+    );
   }
 
   hurtPlayer() {
@@ -387,6 +431,7 @@ class Game {
     this._drawPlatforms(ctx);
     this.animals.forEach(a => a.render(ctx, this.tick));
     this.robots.forEach(r => r.render(ctx, this.tick));
+    this._drawExitGate(ctx);
     this.player.render(ctx, this.tick, this.invincible);
     this._drawParticles(ctx);
 
@@ -545,7 +590,35 @@ class Game {
     });
     ctx.globalAlpha = 1;
   }
+  _drawExitGate(ctx) {
+    const e = this.exitGate;
+    if (!e) return;
 
+    // poste
+    ctx.fillStyle = '#4e342e';
+    ctx.fillRect(e.x, e.y + 8, 8, e.h - 8);
+    ctx.fillRect(e.x + e.w - 8, e.y + 8, 8, e.h - 8);
+
+    // topo
+    ctx.fillStyle = this.exitUnlocked ? '#76ff73' : '#777';
+    ctx.fillRect(e.x, e.y, e.w, 10);
+
+    // portal/placa
+    ctx.fillStyle = this.exitUnlocked ? 'rgba(118,255,115,0.25)' : 'rgba(120,120,120,0.18)';
+    ctx.fillRect(e.x + 8, e.y + 12, e.w - 16, e.h - 12);
+
+    ctx.fillStyle = this.exitUnlocked ? '#76ff73' : '#999';
+    ctx.font = '8px "Press Start 2P", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(this.exitUnlocked ? 'SAÍDA' : 'LOCK', e.x + e.w / 2, e.y - 8);
+    ctx.textAlign = 'left';
+
+    if (this.exitUnlocked) {
+      ctx.strokeStyle = 'rgba(118,255,115,0.6)';
+      ctx.strokeRect(e.x + 8, e.y + 12, e.w - 16, e.h - 12);
+    }
+  }
+  
   // ── COLLISION HELPERS ────────────────────────────────────────
   getGroundY(x, w) {
     let minY = 9999;

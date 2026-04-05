@@ -214,6 +214,17 @@ const STATE = {
   unlockedBiomes: new Set(['mata']),
   currentBiome: null,
 
+  resetBiomeCatalog(biomeKey) {
+    const biome = BIOMES[biomeKey];
+    if (!biome) return;
+
+    biome.animals.forEach(animalId => {
+      this.cataloged.delete(animalId);
+    });
+
+    this.save();
+  },
+
   catalog(animalId) {
     this.cataloged.add(animalId);
     this.save();

@@ -578,6 +578,61 @@ body {
   image-rendering: crisp-edges;
 }
 
+#mission-box {
+  position: absolute;
+  top: 72px;
+  left: 16px;
+  width: 320px;
+  background: rgba(0,0,0,0.82);
+  border: 3px solid var(--green-mid);
+  padding: 12px;
+  z-index: 60;
+  box-shadow: 4px 4px 0 #000;
+}
+
+.mission-title {
+  font-size: 8px;
+  color: var(--green-neon);
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+#mission-text {
+  font-family: var(--font-vt);
+  font-size: 20px;
+  color: var(--cream);
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+
+#mission-progress,
+#mission-status {
+  font-size: 7px;
+  color: var(--amber);
+  margin-top: 6px;
+}
+
+#objective-status.ready {
+  color: var(--green-neon);
+}
+
+#objective-status.done {
+  color: #76ff73;
+}
+
+#exit-hint {
+  position: absolute;
+  top: 72px;
+  right: 16px;
+  background: rgba(0,0,0,0.85);
+  color: var(--amber);
+  border: 3px solid var(--amber-dark);
+  padding: 10px 14px;
+  font-size: 8px;
+  z-index: 60;
+  animation: pulse-alert 0.7s step-end infinite;
+}
+
 /* ── ANIMAL CARD ────────────────────────────────────────────── */
 #animal-card {
   position: absolute;
