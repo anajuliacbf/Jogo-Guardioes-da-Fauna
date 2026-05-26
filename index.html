@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guardiões da Fauna</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════ TELA INICIAL ══════════════════════════════ -->
+  <div id="screen-title" class="screen active">
+    <div class="stars"></div>
+    <div class="fireflies"></div>
+
+    <div class="title-container">
+      <div class="logo-wrapper">
+        <div class="logo-badge">
+          <span class="logo-top">GUARDIÕES</span>
+          <span class="logo-da">da</span>
+          <span class="logo-bottom">FAUNA</span>
+        </div>
+        <div class="logo-glow"></div>
+      </div>
+
+      <div class="hero-scene">
+        <div class="pixel-leo"></div>
+        <div class="pixel-jaguar"></div>
+        <div class="pixel-wolf"></div>
+        <div class="scene-ground"></div>
+        <div class="scene-trees">
+          <div class="tree t1"></div>
+          <div class="tree t2"></div>
+          <div class="tree t3"></div>
+          <div class="tree t4"></div>
+        </div>
+      </div>
+
+      <nav class="main-menu">
+        <button class="menu-btn primary" id="btn-start" onclick="showScreen('screen-biome')">
+          <span class="btn-icon">▶</span> INICIAR JOGO
+        </button>
+        <button class="menu-btn" id="btn-bestiary" onclick="showScreen('screen-bestiary')">
+          <span class="btn-icon">📖</span> ANIMAIS
+        </button>
+        <button class="menu-btn" id="btn-options" onclick="showScreen('screen-options')">
+          <span class="btn-icon">⚙</span> OPÇÕES
+        </button>
+        <button class="menu-btn" id="btn-credits" onclick="showScreen('screen-credits')">
+          <span class="btn-icon">★</span> CRÉDITOS
+        </button>
+      </nav>
+
+      <div class="title-footer">
+        <span class="blink">PRESSIONE ENTER PARA COMEÇAR</span>
+      </div>
+    </div>
+
+    <div class="corner-deco tl"></div>
+    <div class="corner-deco tr"></div>
+    <div class="corner-deco bl"></div>
+    <div class="corner-deco br"></div>
+  </div>
+
+  <!-- ══════════════════════════════ SELEÇÃO DE BIOMA ══════════════════════════════ -->
+  <div id="screen-biome" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" onclick="showScreen('screen-title')">◀ VOLTAR</button>
+      <h2 class="screen-title-text">ESCOLHA SEU BIOMA</h2>
+      <div class="fauna-counter">🐾 <span id="total-cataloged">0</span>/20</div>
+    </div>
+
+    <div class="biome-grid">
+      <div class="biome-card" id="biome-mata" onclick="startGame('mata')">
+        <div class="biome-art mata-art">
+          <div class="biome-pixel-scene">
+            <div class="bp-tree bp-t1"></div>
+            <div class="bp-tree bp-t2"></div>
+            <div class="bp-animal monkey"></div>
+          </div>
+        </div>
+        <div class="biome-info">
+          <h3>MATA ATLÂNTICA</h3>
+          <p class="biome-desc">Floresta densa e vertical</p>
+          <div class="biome-animals">
+            <span class="animal-tag">🐒 Mico-Leão</span>
+            <span class="animal-tag">🦜 Tucano</span>
+            <span class="animal-tag">🦥 Preguiça</span>
+          </div>
+          <div class="biome-status unlocked">DESBLOQUEADO</div>
+        </div>
+      </div>
+
+      <div class="biome-card locked" id="biome-amazonia">
+        <div class="biome-art amazonia-art">
+          <div class="biome-pixel-scene">
+            <div class="bp-water"></div>
+            <div class="bp-animal dolphin"></div>
+          </div>
+        </div>
+        <div class="biome-info">
+          <h3>AMAZÔNIA</h3>
+          <p class="biome-desc">Floresta inundada & rios</p>
+          <div class="biome-animals">
+            <span class="animal-tag">🐬 Boto</span>
+            <span class="animal-tag">🐄 Peixe-Boi</span>
+            <span class="animal-tag">🦜 Arara-Azul</span>
+          </div>
+          <div class="biome-status locked-status">🔒 COMPLETE MATA ATLÂNTICA</div>
+        </div>
+      </div>
+
+      <div class="biome-card locked" id="biome-cerrado">
+        <div class="biome-art cerrado-art">
+          <div class="biome-pixel-scene">
+            <div class="bp-fire"></div>
+            <div class="bp-animal wolf"></div>
+          </div>
+        </div>
+        <div class="biome-info">
+          <h3>CERRADO</h3>
+          <p class="biome-desc">Seca & árvores retorcidas</p>
+          <div class="biome-animals">
+            <span class="animal-tag">🦊 Lobo-Guará</span>
+            <span class="animal-tag">🐜 Tamanduá</span>
+            <span class="animal-tag">🦢 Ema</span>
+          </div>
+          <div class="biome-status locked-status">🔒 COMPLETE AMAZÔNIA</div>
+        </div>
+      </div>
+
+      <div class="biome-card locked" id="biome-pantanal">
+        <div class="biome-art pantanal-art">
+          <div class="biome-pixel-scene">
+            <div class="bp-sunset"></div>
+            <div class="bp-animal jaguar"></div>
+          </div>
+        </div>
+        <div class="biome-info">
+          <h3>PANTANAL</h3>
+          <p class="biome-desc">Confronto Final — Robô Alfa</p>
+          <div class="biome-animals">
+            <span class="animal-tag">🐦 Tuiuiú</span>
+            <span class="animal-tag">🦛 Capivara</span>
+            <span class="animal-tag">🐆 Onça-Pintada</span>
+          </div>
+          <div class="biome-status locked-status">🔒 COMPLETE CERRADO</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ TELA DE JOGO ══════════════════════════════ -->
+  <div id="screen-game" class="screen">
+    <!-- HUD -->
+    <div id="hud">
+      <div class="hud-left">
+        <div id="lives-display">
+          <span class="heart" id="h1">❤️</span>
+          <span class="heart" id="h2">❤️</span>
+          <span class="heart" id="h3">❤️</span>
+        </div>
+        <div id="biome-label">MATA ATLÂNTICA</div>
+      </div>
+      <div class="hud-center">
+        <div id="minimap">
+          <div id="minimap-player"></div>
+          <div class="minimap-border"></div>
+        </div>
+        <div id="fauna-hud">🐾 <span id="fauna-count">0</span>/<span id="fauna-total">5</span></div>
+      </div>
+      <div class="hud-right">
+        <div id="robot-alert" class="hidden">⚠️ ROBÔ</div>
+        <button id="btn-pause" onclick="togglePause()">⏸ PAUSA</button>
+      </div>
+    </div>
+
+      <!-- Canvas do jogo -->
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Painel de missão -->
+    <div id="mission-box">
+      <div class="mission-title">MISSÃO</div>
+      <div id="mission-text">Catalogue todos os animais e alcance a saída.</div>
+      <div id="mission-progress">Animais: <span id="objective-progress">0/3</span></div>
+      <div id="mission-status">Status: <span id="objective-status">EM ANDAMENTO</span></div>
+    </div>
+
+    <!-- Aviso de saída -->
+    <div id="exit-hint" class="hidden">➡ SAÍDA LIBERADA!</div>
+
+    <!-- Animal Card popup -->
+    <div id="animal-card" class="hidden">
+      <div class="card-inner">
+        <div class="card-header">ANIMAL CATALOGADO!</div>
+        <div class="card-emoji" id="card-emoji">🐒</div>
+        <div class="card-name" id="card-name">Mico-Leão-Dourado</div>
+        <div class="card-sci" id="card-sci">Leontopithecus rosalia</div>
+        <div class="card-status" id="card-status">Em Perigo</div>
+        <div class="card-fact" id="card-fact">Símbolo da luta contra a extinção!</div>
+        <button onclick="closeCard()">CONTINUAR ▶</button>
+      </div>
+    </div>
+
+    <!-- Pause overlay -->
+    <div id="pause-overlay" class="hidden">
+      <div class="pause-box">
+        <h2>⏸ PAUSADO</h2>
+        <button class="menu-btn" onclick="togglePause()">▶ CONTINUAR</button>
+        <button class="menu-btn" onclick="openOptionsFromPause()">⚙ OPÇÕES</button>
+        <button class="menu-btn" onclick="showScreen('screen-biome')">🗺️ BIOMAS</button>
+        <button class="menu-btn" onclick="showScreen('screen-title')">🏠 MENU</button>
+      </div>
+    </div>
+
+    <!-- Game Over overlay -->
+    <div id="gameover-overlay" class="hidden">
+      <div class="gameover-box">
+        <h2 id="gameover-title">💀 GAME OVER</h2>
+        <p id="gameover-msg">Você perdeu todas as vidas!</p>
+        <button class="menu-btn primary" onclick="restartGame()">🔄 TENTAR NOVAMENTE</button>
+        <button class="menu-btn" onclick="showScreen('screen-biome')">🗺️ BIOMAS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ BESTIÁRIO ══════════════════════════════ -->
+  <div id="screen-bestiary" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" onclick="showScreen('screen-title')">◀ VOLTAR</button>
+      <h2 class="screen-title-text">📖 ANIMAIS</h2>
+      <div class="fauna-counter">🐾 <span id="bestiary-count">0</span>/20</div>
+    </div>
+    <div class="bestiary-grid" id="bestiary-grid"></div>
+  </div>
+
+  <!-- ══════════════════════════════ CRÉDITOS ══════════════════════════════ -->
+  <div id="screen-credits" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" onclick="showScreen('screen-title')">◀ VOLTAR</button>
+      <h2 class="screen-title-text">★ CRÉDITOS</h2>
+    </div>
+    <div class="credits-box">
+      <div class="credits-logo">GUARDIÕES DA FAUNA</div>
+      <div class="credits-section">
+        <h3>DESENVOLVEDORES</h3>
+        <p>Ana Julia Castelo Branco</p>
+        <p>Eduardo Maik Oliveira</p>
+        <p>Guilherme Eduardo Gonçalves</p>
+        <p>João Pedro Teixeira Monteiro</p>
+
+      </div>
+      <div class="credits-section">
+        <h3>DISCIPLINA</h3>
+        <p>PAC3 – Jogos Educativos</p>
+      </div>
+      <div class="credits-section">
+        <h3>PROFESSOR</h3>
+        <p>Paulo Manseira</p>
+      </div>
+      <div class="credits-section">
+        <h3>INSPIRAÇÕES</h3>
+        <p>Donkey Kong Country</p>
+        <p>Ori and the Blind Forest</p>
+        <p>Scribblenauts</p>
+        <p>Guacamelee!</p>
+      </div>
+      <div class="credits-heart">Feito com ❤️ para a fauna brasileira 🌿</div>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════ CUTSCENE (ADICIONADO PARA GDD) ══════════════════════════════ -->
+  <div id="screen-cutscene" class="screen">
+    <div id="cutscene-bg"></div>
+    <div id="cutscene-content">
+      <div id="cutscene-frame-art"></div>
+      <div id="cutscene-textbox">
+        <div id="cutscene-speaker"></div>
+        <div id="cutscene-text"></div>
+        <div id="cutscene-hint" class="blink">[ ESPAÇO / CLIQUE PARA CONTINUAR ]</div>
+        <button id="cutscene-skip" onclick="skipCutscene()">PULAR ▶▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ OPÇÕES (ADICIONADO PARA GDD) ══════════════════════════════ -->
+  <div id="screen-options" class="screen">
+    <div class="screen-header">
+      <button class="back-btn" id="options-back" onclick="showScreen('screen-title')">◀ VOLTAR</button>
+      <h2 class="screen-title-text">⚙ OPÇÕES</h2>
+      <div></div>
+    </div>
+    <div class="options-box">
+      <div class="option-row">
+        <label class="option-label">🎵 MÚSICA</label>
+        <div class="option-control">
+          <input type="range" id="opt-music" min="0" max="100" value="70" oninput="setMusicVolume(this.value)">
+          <span id="opt-music-val" class="opt-val">70</span>
+        </div>
+      </div>
+      <div class="option-row">
+        <label class="option-label">🔊 EFEITOS</label>
+        <div class="option-control">
+          <input type="range" id="opt-sfx" min="0" max="100" value="80" oninput="setSfxVolume(this.value)">
+          <span id="opt-sfx-val" class="opt-val">80</span>
+        </div>
+      </div>
+      <div class="option-row vertical">
+        <label class="option-label">⌨️ CONTROLES</label>
+        <div class="controls-table">
+          <div class="ctrl-row"><span class="ctrl-key">← →</span><span class="ctrl-desc">Mover</span></div>
+          <div class="ctrl-row"><span class="ctrl-key">ESPAÇO</span><span class="ctrl-desc">Pular / Pulo Duplo</span></div>
+          <div class="ctrl-row"><span class="ctrl-key">↑ / W</span><span class="ctrl-desc">Escalar / Nadar p/ cima</span></div>
+          <div class="ctrl-row"><span class="ctrl-key">E</span><span class="ctrl-desc">Interagir / Catalogar</span></div>
+          <div class="ctrl-row"><span class="ctrl-key">Q</span><span class="ctrl-desc">Binóculo Solar</span></div>
+          <div class="ctrl-row"><span class="ctrl-key">ESC</span><span class="ctrl-desc">Pausar</span></div>
+        </div>
+      </div>
+      <div class="option-row">
+        <label class="option-label">🗑️ DADOS</label>
+        <button class="menu-btn danger-btn" onclick="resetSave()">APAGAR PROGRESSO</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ TOAST DE CONQUISTA ══════════════════════════════ -->
+  <div id="achievement-toast">
+    <span id="ach-icon"></span>
+    <div class="ach-text">
+      <div class="ach-title">CONQUISTA DESBLOQUEADA</div>
+      <div class="ach-name" id="ach-name"></div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
