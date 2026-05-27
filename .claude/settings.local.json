@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const code = require\\('fs'\\).readFileSync\\('c:/Users/Twygo/Jogo-Guardioes-da-Fauna/js/game.js','utf8'\\); const m = code.match\\(/const _LEO = \\\\{\\([\\\\s\\\\S]*?\\)\\\\};/\\); if\\(m\\){ const keys = [...m[1].matchAll\\(/^\\\\s+\\(\\\\w+\\):/gm\\)].map\\(x=>x[1]\\); console.log\\('Keys:', keys.join\\(', '\\)\\); const ns = [...m[1].matchAll\\(/n:\\(\\\\d+\\)/g\\)].map\\(x=>x[1]\\); console.log\\('n values:', ns.join\\(', '\\)\\); }\")"
+    ]
+  }
+}
