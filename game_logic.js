@@ -1,4 +1,4 @@
-/* ===========================================================================
+﻿/* ===========================================================================
    GUARDIÕES DA FAUNA — Motor 2D (canvas)
    Telas: Início, Menu, Seleção de Bioma, Bestiário, Como Jogar.
    4 biomas (Mata Atlântica, Amazônia, Cerrado, Pantanal) + chefe (Robô Alfa).
@@ -694,12 +694,20 @@ function drawHowto(){ menuBackdrop(); center('COMO JOGAR',58,22,'#ffe27a');
   if(button('‹ VOLTAR',24,VH-54,150,38,false)) go(GS.MENU);
 }
 // ---- BESTIÁRIO ----
-function drawBestiary(){ menuBackdrop(); center('BESTIÁRIO',52,22,'#ffe27a');
+function drawBestiary(){
+  menuBackdrop(); center('BESTIÁRIO',52,22,'#ffe27a');
   center('Catalogados: '+totalCaught()+' / 12',80,10,'#dff0c0');
-  const x0=66,y0=104,cardW=404,cardH=84,gapY=10,colGap=20; let idx=0;
+  const x0=66,y0=104,cardW=404,cardH=84,gapY=10,colGap=20;
+  const clipTop=y0-4, clipBot=VH-64;
+  const rows=Math.ceil(12/2), totalH=y0+rows*(cardH+gapY);
+  const maxScroll=Math.max(0,totalH-clipBot);
+  bestiaryScroll=Math.max(0,Math.min(maxScroll,bestiaryScroll));
+  ctx.save(); ctx.beginPath(); ctx.rect(0,clipTop,VW,clipBot-clipTop); ctx.clip();
+  let idx=0;
   for(let b=0;b<BIOME_IDS.length;b++){ const bid=BIOME_IDS[b];
     for(let i=0;i<ANIMALS[bid].length;i++){ const col=idx%2, row=(idx/2)|0;
-      const x=x0+col*(cardW+colGap), y=y0+row*(cardH+gapY); idx++;
+      const x=x0+col*(cardW+colGap), y=y0+row*(cardH+gapY)-bestiaryScroll; idx++;
+      if(y+cardH<clipTop||y>clipBot) continue;
       const a=ANIMALS[bid][i], got=isCaught(bid,i);
       ctx.fillStyle=got?'rgba(29,42,22,0.92)':'rgba(0,0,0,0.5)'; ctx.strokeStyle=got?'#ffe27a':'rgba(255,255,255,0.2)'; ctx.lineWidth=got?2:1; rr(x,y,cardW,cardH,8); ctx.fill(); ctx.stroke();
       ctx.font='38px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.globalAlpha=got?1:0.25; ctx.fillText(got?a.emoji:'❔',x+32,y+cardH/2); ctx.globalAlpha=1; ctx.textBaseline='alphabetic';
@@ -710,6 +718,13 @@ function drawBestiary(){ menuBackdrop(); center('BESTIÁRIO',52,22,'#ffe27a');
       } else { ctx.textAlign='left'; ctx.fillStyle='#7c9a6a'; ctx.font='9px "Press Start 2P",monospace'; ctx.fillText('? ? ?',x+58,y+30);
         ctx.fillStyle='#5d7a4a'; ctx.font='10px Georgia,serif'; ctx.fillText(BIOME_NAMES[bid],x+58,y+52); }
     } }
+  ctx.restore();
+  if(maxScroll>0){
+    const sbx=VW-14,sby=clipTop,sbh=clipBot-clipTop;
+    const th=Math.max(40,sbh*sbh/(totalH-y0+sbh));
+    ctx.fillStyle='rgba(0,0,0,0.4)'; rr(sbx,sby,8,sbh,4); ctx.fill();
+    ctx.fillStyle='rgba(255,226,122,0.75)'; rr(sbx,sby+(bestiaryScroll/maxScroll)*(sbh-th),8,th,4); ctx.fill();
+  }
   if(button('‹ VOLTAR',24,VH-54,150,38,false)) go(GS.MENU);
 }
 // ---- PAUSE ----
@@ -766,6 +781,7 @@ function handleEdge(k){
   if(state===GS.GAMEWIN){ if(k==='enter'||k==='back')go(GS.MENU); return; }
 }
 addEventListener('keydown', e=>{ if(e.code==='KeyR' && (state===GS.PAUSE||state===GS.PLAY)){ loadPhase(curBiome); go(GS.PLAY); } });
+addEventListener('wheel', e=>{ if(state!==GS.BESTIARY) return; const maxS=Math.max(0,(104+6*(84+10))-(VH-64)); bestiaryScroll=Math.max(0,Math.min(maxS,bestiaryScroll+e.deltaY*0.5)); e.preventDefault(); },{passive:false});
 
 // ---------- Áudio (WebAudio) ----------
 const AUD={ ctx:null, muted:false, ensure(){ if(!this.ctx){ try{ this.ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(this.ctx&&this.ctx.state==='suspended')this.ctx.resume(); } };

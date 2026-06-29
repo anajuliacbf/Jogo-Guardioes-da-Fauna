@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
@@ -11,8 +11,7 @@
   html,body { height:100%; background:#0b110a; overflow:hidden; font-family:'Press Start 2P',monospace; }
   #wrap { width:100%; height:100%; display:flex; align-items:center; justify-content:center;
     background: radial-gradient(circle at 50% 35%, #1c2a16 0%, #0b110a 75%); }
-  #stage { position:relative; width:min(96vw, 170vh); aspect-ratio:16/9;
-    box-shadow:0 10px 40px rgba(0,0,0,.6), 0 0 0 3px #2c3a22, 0 0 0 6px #14200f; border-radius:6px; overflow:hidden; }
+  #stage { position:relative; width:100vw; height:100vh; overflow:hidden; }
   canvas { display:block; width:100%; height:100%; image-rendering:pixelated; image-rendering:crisp-edges; background:#10180e; cursor:pointer; }
   #tip { position:absolute; bottom:6px; left:0; width:100%; text-align:center; color:#7c9a6a; font-size:9px; pointer-events:none; opacity:.7; text-shadow:0 1px 2px #000; }
 </style>
@@ -21,7 +20,6 @@
   <div id="wrap">
     <div id="stage">
       <canvas id="game" width="960" height="540"></canvas>
-      <div id="tip">Clique no jogo e use o teclado &bull; M: som</div>
     </div>
   </div>
 <script>
@@ -117,7 +115,7 @@ const GS = { BOOT:0, TITLE:1, MENU:2, SELECT:3, HOWTO:4, BESTIARY:5,
   PLAY:7, PAUSE:8, OVER:9, PHASEWIN:10, GAMEWIN:11 };
 let state = GS.BOOT;
 let time=0, camX=0, camY=0, shake=0, hintMsg='', hintT=0;
-let menuSel=0, biomeSel=0, pauseSel=0, overSel=0, winSel=0;
+let menuSel=0, biomeSel=0, pauseSel=0, overSel=0, winSel=0, bestiaryScroll=0;
 let cardToast=null;   // ficha não-bloqueante {a,t}
 
 // ---------- Mundo ----------
@@ -666,7 +664,7 @@ function drawTitle(){ menuBackdrop();
   center('GUARDIÕES',VH/2-120+yb,40,'#ffe27a'); center('DA FAUNA',VH/2-76+yb,40,'#ffe27a');
   center('O Protocolo Ferrugem',VH/2-30,13,'#dff0c0');
   if(Math.floor(time*2)%2===0) center('▶ PRESSIONE ENTER / CLIQUE',VH/2+64,13,'#fff');
-  center('Eduardo • Guilherme • João Pedro   —   PAC3',VH-26,8,'#7c9a6a');
+  center('Eduardo • Guilherme • João • Ana — PAC3',VH-26,8,'#7c9a6a');
 }
 // ---- MENU PRINCIPAL ----
 function drawMenu(){ menuBackdrop();
@@ -674,7 +672,6 @@ function drawMenu(){ menuBackdrop();
   const items=['▶  JOGAR','🗺  SELECIONAR BIOMA','📖  BESTIÁRIO','❔  COMO JOGAR',(AUD.muted?'🔇  SOM: OFF':'🔊  SOM: ON')];
   const w=360,x=VW/2-w/2; let y=150;
   for(let i=0;i<items.length;i++){ if(button(items[i],x,y,w,46,i===menuSel)) selectMenu(i); y+=58; }
-  center('Setas ▲ ▼ e ENTER • ou use o mouse',VH-24,9,'#9bb585');
 }
 function selectMenu(i){ menuSel=i;
   if(i===0){ startBiome(0); }
@@ -712,7 +709,7 @@ function drawHowto(){ menuBackdrop(); center('COMO JOGAR',58,22,'#ffe27a');
     ['O "Protocolo Ferrugem" reativou robôs que tentam',0],
     ['"organizar" a natureza, engaiolando os animais.',0],
     ['Você é Leo, o jovem Guardião, e usa o Binóculo Solar',0],
-    ['para desligar os robôs — sem violência.',0],
+    ['para desligar os robôs.',0],
     ['',0],
     ['CONTROLES',1],
     ['◀ ▶ / A D : mover     ESPAÇO : pular / pulo duplo',0],
@@ -730,12 +727,20 @@ function drawHowto(){ menuBackdrop(); center('COMO JOGAR',58,22,'#ffe27a');
   if(button('‹ VOLTAR',24,VH-54,150,38,false)) go(GS.MENU);
 }
 // ---- BESTIÁRIO ----
-function drawBestiary(){ menuBackdrop(); center('BESTIÁRIO',52,22,'#ffe27a');
+function drawBestiary(){
+  menuBackdrop(); center('BESTIÁRIO',52,22,'#ffe27a');
   center('Catalogados: '+totalCaught()+' / 12',80,10,'#dff0c0');
-  const x0=66,y0=104,cardW=404,cardH=84,gapY=10,colGap=20; let idx=0;
+  const x0=66,y0=104,cardW=404,cardH=84,gapY=10,colGap=20;
+  const clipTop=y0-4, clipBot=VH-64;
+  const rows=Math.ceil(12/2), totalH=y0+rows*(cardH+gapY);
+  const maxScroll=Math.max(0,totalH-clipBot);
+  bestiaryScroll=Math.max(0,Math.min(maxScroll,bestiaryScroll));
+  ctx.save(); ctx.beginPath(); ctx.rect(0,clipTop,VW,clipBot-clipTop); ctx.clip();
+  let idx=0;
   for(let b=0;b<BIOME_IDS.length;b++){ const bid=BIOME_IDS[b];
     for(let i=0;i<ANIMALS[bid].length;i++){ const col=idx%2, row=(idx/2)|0;
-      const x=x0+col*(cardW+colGap), y=y0+row*(cardH+gapY); idx++;
+      const x=x0+col*(cardW+colGap), y=y0+row*(cardH+gapY)-bestiaryScroll; idx++;
+      if(y+cardH<clipTop||y>clipBot) continue;
       const a=ANIMALS[bid][i], got=isCaught(bid,i);
       ctx.fillStyle=got?'rgba(29,42,22,0.92)':'rgba(0,0,0,0.5)'; ctx.strokeStyle=got?'#ffe27a':'rgba(255,255,255,0.2)'; ctx.lineWidth=got?2:1; rr(x,y,cardW,cardH,8); ctx.fill(); ctx.stroke();
       ctx.font='38px serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.globalAlpha=got?1:0.25; ctx.fillText(got?a.emoji:'❔',x+32,y+cardH/2); ctx.globalAlpha=1; ctx.textBaseline='alphabetic';
@@ -746,9 +751,15 @@ function drawBestiary(){ menuBackdrop(); center('BESTIÁRIO',52,22,'#ffe27a');
       } else { ctx.textAlign='left'; ctx.fillStyle='#7c9a6a'; ctx.font='9px "Press Start 2P",monospace'; ctx.fillText('? ? ?',x+58,y+30);
         ctx.fillStyle='#5d7a4a'; ctx.font='10px Georgia,serif'; ctx.fillText(BIOME_NAMES[bid],x+58,y+52); }
     } }
+  ctx.restore();
+  if(maxScroll>0){
+    const sbx=VW-14,sby=clipTop,sbh=clipBot-clipTop;
+    const th=Math.max(40,sbh*sbh/(totalH-y0+sbh));
+    ctx.fillStyle='rgba(0,0,0,0.4)'; rr(sbx,sby,8,sbh,4); ctx.fill();
+    ctx.fillStyle='rgba(255,226,122,0.75)'; rr(sbx,sby+(bestiaryScroll/maxScroll)*(sbh-th),8,th,4); ctx.fill();
+  }
   if(button('‹ VOLTAR',24,VH-54,150,38,false)) go(GS.MENU);
-}
-// ---- PAUSE ----
+}// ---- PAUSE ----
 function drawPause(){ render(); dim(0.62); center('⏸ PAUSADO',150,24,'#fff');
   const w=320,x=VW/2-w/2; let y=210;
   if(button('CONTINUAR',x,y,w,46,pauseSel===0)) go(GS.PLAY); y+=58;
@@ -804,6 +815,7 @@ function handleEdge(k){
 addEventListener('keydown', e=>{ if(e.code==='KeyR' && (state===GS.PAUSE||state===GS.PLAY)){ loadPhase(curBiome); go(GS.PLAY); } });
 
 // ---------- Áudio (WebAudio) ----------
+addEventListener('wheel', e=>{ if(state!==GS.BESTIARY) return; const maxS=Math.max(0,(104+6*(84+10))-(VH-64)); bestiaryScroll=Math.max(0,Math.min(maxS,bestiaryScroll+e.deltaY*0.5)); e.preventDefault(); },{passive:false});
 const AUD={ ctx:null, muted:false, ensure(){ if(!this.ctx){ try{ this.ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } if(this.ctx&&this.ctx.state==='suspended')this.ctx.resume(); } };
 function sfx(type){ if(!AUD.ctx||AUD.muted)return; const c=AUD.ctx,t=c.currentTime; const o=c.createOscillator(),g=c.createGain(); o.connect(g); g.connect(c.destination);
   let f0=440,f1=440,d=0.12,ty='square',vol=0.12;
