@@ -92,10 +92,10 @@ function frameImg(name, t){
 }
 
 // ---------- Desenho de sprites ----------
-function drawB(img, cx, by, scale, flip, alpha, tint){
+function drawB(img, cx, by, scale, flip, alpha, tint, rot){
   if(!img) return; const w=img.width*scale, h=img.height*scale;
   ctx.save(); ctx.globalAlpha = alpha==null?1:alpha;
-  ctx.translate(cx|0, by|0); if(flip) ctx.scale(-1,1);
+  ctx.translate(cx|0, by|0); if(flip) ctx.scale(-1,1); if(rot) ctx.rotate(rot);
   ctx.drawImage(img, (-w/2)|0, (-h)|0, w|0, h|0);
   if(tint){ ctx.globalCompositeOperation='source-atop'; ctx.fillStyle=tint; ctx.fillRect((-w/2)|0,(-h)|0,w|0,h|0); }
   ctx.restore();
@@ -116,6 +116,7 @@ const KEYMAP = { ArrowLeft:'left',KeyA:'left',ArrowRight:'right',KeyD:'right',
   Space:'jump',KeyE:'catalog',KeyQ:'binoc',Escape:'pause',KeyP:'pause',
   Enter:'enter',KeyM:'mute',Backspace:'back' };
 addEventListener('keydown', e=>{
+  MUSIC.start();
   const k=KEYMAP[e.code];
   if(k){ if(['left','right','up','down','jump'].includes(k)) e.preventDefault();
     if(!keys[k]) pressed[k]=true; keys[k]=true; handleEdge(k); }
@@ -125,8 +126,8 @@ addEventListener('keyup', e=>{ const k=KEYMAP[e.code]; if(k) keys[k]=false; });
 let mx=0,my=0,mClick=false;
 function toCanvas(e){ const r=cv.getBoundingClientRect(); mx=(e.clientX-r.left)*(VW/r.width); my=(e.clientY-r.top)*(VH/r.height); }
 cv.addEventListener('mousemove', e=>toCanvas(e));
-cv.addEventListener('mousedown', e=>{ toCanvas(e); mClick=true; });
-cv.addEventListener('pointerdown', e=>{ if(e&&e.clientX!=null) toCanvas(e); });
+cv.addEventListener('mousedown', e=>{ MUSIC.start(); toCanvas(e); mClick=true; });
+cv.addEventListener('pointerdown', e=>{ MUSIC.start(); if(e&&e.clientX!=null) toCanvas(e); });
 
 // ---------- Estado ----------
 const GS = { BOOT:0, TITLE:1, MENU:2, SELECT:3, HOWTO:4, BESTIARY:5,
@@ -288,7 +289,7 @@ function buildMata(){
 
 function buildAmazonia(){
   levelW=5400; exitX=5180;
-  ground(-40,900);
+  ground(-40,940);
   water.push({x:900,y:GROUND-6,w:1700,h:300}); plats.push({x:900,y:GROUND+160,w:1700,h:140,ground:true});
   ground(2600,500);
   water.push({x:3100,y:GROUND-6,w:1400,h:300}); plats.push({x:3100,y:GROUND+160,w:1400,h:140,ground:true});
@@ -324,7 +325,7 @@ function buildCerrado(){
 
 function buildPantanal(){
   levelW=5600; exitX=5450;
-  ground(-40,1500);
+  ground(-40,1540);
   water.push({x:1500,y:GROUND-6,w:900,h:300}); plats.push({x:1500,y:GROUND+160,w:900,h:140,ground:true});
   ground(2400,900);
   [1620,1860,2120].forEach(x=>lilies.push({x,y:GROUND-10,w:96,h:18,baseY:GROUND-10,sink:0}));
@@ -340,11 +341,11 @@ function buildPantanal(){
 
 // ============================ JOGADOR ============================
 const P = { x:120,y:GROUND-64,w:30,h:64,vx:0,vy:0,face:1,onGround:false,jumps:0,coyote:0,
-  climbing:false,swimming:false,hp:3,inv:0,slow:0,aim:0,binoCd:0,state:'idle',anim:0,hurtAnim:0,dead:false };
+  climbing:false,swimming:false,hp:3,inv:0,slow:0,aim:0,binoCd:0,vineCd:0,state:'idle',anim:0,hurtAnim:0,dead:false };
 const SPD=210,AIR=190,JUMP=470,GRAV=1500,MAXFALL=720,SWIM=160;
 
 function resetPlayer(toCp){ P.x=toCp?checkpoint.x:120; P.y=toCp?checkpoint.y:GROUND-64;
-  P.vx=0;P.vy=0;P.jumps=0;P.climbing=false;P.swimming=false;P.inv=1.0;P.slow=0;P.aim=0;P.dead=false;P.state='idle';P.anim=0; }
+  P.vx=0;P.vy=0;P.jumps=0;P.climbing=false;P.swimming=false;P.inv=1.0;P.slow=0;P.aim=0;P.vineCd=0;P.dead=false;P.state='idle';P.anim=0; }
 
 function nearVine(){ const cx=P.x+P.w/2; for(const v of vines){ if(Math.abs(cx-v.x)<22 && P.y+P.h>v.y0 && P.y<v.y1) return v; } return null; }
 function inWater(){ const cx=P.x+P.w/2, cy=P.y+P.h*0.6; for(const w of water){ if(cx>w.x&&cx<w.x+w.w&&cy>w.y&&cy<w.y+w.h) return w; } return null; }
@@ -357,13 +358,13 @@ function solidsCollideY(){ P.onGround=false;
     if(P.vy>=0 && rectsOverlap(P,SR) && (P.y+P.h-P.vy*STEP)<=l.y+8){ P.y=l.y-P.h; P.onGround=true; P.jumps=0; P.vy=0; l.standing=true; } } }
 
 function updatePlayer(dt){
-  if(P.inv>0)P.inv-=dt; if(P.slow>0)P.slow-=dt; if(P.binoCd>0)P.binoCd-=dt; if(P.aim>0)P.aim-=dt; if(P.hurtAnim>0)P.hurtAnim-=dt;
+  if(P.inv>0)P.inv-=dt; if(P.slow>0)P.slow-=dt; if(P.binoCd>0)P.binoCd-=dt; if(P.aim>0)P.aim-=dt; if(P.hurtAnim>0)P.hurtAnim-=dt; if(P.vineCd>0)P.vineCd-=dt;
   const spdMul=P.slow>0?0.5:1;
   if(pressed.binoc && P.binoCd<=0 && !P.dead){ P.aim=0.32; P.binoCd=0.55; fireBinoc(); sfx('zap'); }
 
   P.swimming=!!inWater();
   const vine=nearVine();
-  if(vine && (keys.up||keys.down) && !P.swimming) P.climbing=true;
+  if(vine && (keys.up||keys.down) && !P.swimming && P.vineCd<=0) P.climbing=true;
   if(!vine) P.climbing=false;
   for(const l of lilies) l.standing=false;
 
@@ -380,8 +381,9 @@ function updatePlayer(dt){
   } else if(P.climbing){
     P.vx=0;P.vy=0;
     if(keys.up)P.y-=130*dt; if(keys.down)P.y+=130*dt;
-    if(pressed.jump){ P.climbing=false; P.vy=-JUMP*0.8; P.jumps=1; sfx('jump'); }
     P.x=vine.x-P.w/2; if(P.y<vine.y0-10)P.y=vine.y0-10; P.state='idle';
+    if(pressed.jump){ P.climbing=false; P.vineCd=0.35; P.jumps=1; P.vy=-JUMP*0.8;
+      const dir=keys.left?-1:(keys.right?1:P.face); P.vx=dir*220; P.face=dir; sfx('jump'); }
   } else {
     let ax=0; if(keys.left){ax=-1;P.face=-1;} if(keys.right){ax=1;P.face=1;}
     const acc=P.onGround?SPD:AIR; P.vx+=ax*acc*8*dt;
@@ -454,14 +456,16 @@ class Enemy{ constructor(x,y,w,h){ this.x=x;this.y=y;this.w=w;this.h=h;this.acti
 
 class Patrol extends Enemy{ constructor(x,x0,x1){ super(x,GROUND-44,46,44); this.x0=x0;this.x1=x1;this.spd=58;this.attk=0;this.cd=0;this.kind='patrol'; }
   update(dt){ this.t+=dt; if(this.cd>0)this.cd-=dt;
-    if(!this.active){ if(this.dis<1)this.dis+=dt; return; }
+    if(!this.active){ this.dis+=dt; return; }
     const near=Math.abs(P.x+P.w/2-this.cx())<86 && Math.abs(P.y-this.y)<70;
     if(near && this.attk<=0 && this.cd<=0){ this.attk=0.32; this.cd=1.1; this.state='claw'; this.face=(P.x>this.x)?1:-1; }
     if(this.attk>0){ this.attk-=dt; if(this.attk<=0)this.state='move'; }
     else { this.x+=this.spd*this.face*dt; if(this.x<this.x0){this.x=this.x0;this.face=1;} if(this.x>this.x1){this.x=this.x1;this.face=-1;} }
     if(this.hitsPlayer()) hurt(1,true); }
   draw(){ if(!this.onCam())return; const sx=this.cx()-camX, by=this.y+this.h-camY+6;
-    if(!this.active){ drawB(frameImg('hit',Math.min(this.dis,0.4)),sx,by,SCALE.hit,this.face<0,1,'rgba(70,90,150,0.35)'); return; }
+    if(!this.active){ const rot=Math.min(1,this.dis/0.5)*(Math.PI/2)*(this.face<0?-1:1);
+      const alpha=this.dis<0.6?1:Math.max(0,1-(this.dis-0.6)/0.5);
+      drawB(frameImg('hit',Math.min(this.dis,0.4)),sx,by,SCALE.hit,this.face<0,alpha,null,rot); return; }
     if(this.state==='claw') drawB(frameImg('claw',0.32-this.attk),sx,by,SCALE.claw,this.face<0);
     else drawB(frameImg('patrol',this.t),sx,by,SCALE.patrol,this.face<0); }
   disable(){ this.active=false; this.dis=0; shake=6; fx.push(mkSpark(this.cx(),this.cy())); } }
@@ -473,7 +477,7 @@ class Drone extends Enemy{ constructor(x,x0,x1){ super(x,200,56,26); this.x0=x0;
     this.y=this.baseY+Math.sin(this.t*2.2)*16; this.drop-=dt;
     if(this.drop<=0 && Math.abs(P.x+P.w/2-this.cx())<260){ this.drop=2.8; shots.push({type:'net',x:this.cx(),y:this.y+10,vy:140,t:4}); }
     if(this.hitsPlayer()) hurt(1,true); }
-  draw(){ if(!this.onCam())return; drawCc(frameImg('drone',this.t),this.cx()-camX,this.cy()-camY,SCALE.drone,this.face<0,1,this.active?null:'rgba(70,90,150,0.4)'); }
+  draw(){ if(!this.onCam())return; drawCc(frameImg('drone',this.t),this.cx()-camX,this.cy()-camY,SCALE.drone,this.face<0,1,null); }
   disable(){ this.active=false; shake=5; fx.push(mkSpark(this.cx(),this.cy())); } }
 
 class Heavy extends Enemy{ constructor(x){ super(x,GROUND-120,70,120); this.face=-1;this.cd=2.6;this.thr=0;this.kind='heavy';this.expl=0; }
@@ -495,7 +499,7 @@ class Piranha extends Enemy{ constructor(x0,x1){ super(x0,GROUND+30,80,40); this
     this.x+=this.spd*this.face*dt; if(this.x<this.x0){this.x=this.x0;this.face=1;} if(this.x>this.x1){this.x=this.x1;this.face=-1;}
     this.y=this.baseY+Math.sin(this.t*3)*14;
     if(this.hitsPlayer()){ hurt(1,true); P.vx=this.face*260; P.vy=-120; } }
-  draw(){ if(!this.onCam())return; drawCc(frameImg('piranha',this.t),this.cx()-camX,this.cy()-camY,SCALE.piranha,this.face<0,1,this.active?null:'rgba(70,90,150,0.4)'); }
+  draw(){ if(!this.onCam())return; drawCc(frameImg('piranha',this.t),this.cx()-camX,this.cy()-camY,SCALE.piranha,this.face<0,1,null); }
   disable(){ this.active=false; shake=5; fx.push(mkSpark(this.cx(),this.cy())); } }
 
 // CHEFE — Robô Alfa (Pantanal). Vulnerável quando "sobrecarrega".
@@ -621,7 +625,6 @@ function drawBeam(){ if(!beam)return; const x=beam.x-camX,y=beam.y-camY,d=beam.d
   ctx.fillStyle=g; ctx.beginPath(); ctx.moveTo(x,y-6); ctx.lineTo(x+d*L,y-(30+L*0.22)); ctx.lineTo(x+d*L,y+(30+L*0.22)); ctx.lineTo(x,y+6); ctx.closePath(); ctx.fill();
   ctx.globalAlpha=a; ctx.fillStyle='#fffbe6'; ctx.beginPath(); ctx.arc(x,y,7,0,7); ctx.fill(); ctx.restore(); }
 function drawPlayer(){ const sx=P.x+P.w/2-camX, by=P.y+P.h-camY;
-  if(!P.swimming){ ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.beginPath(); ctx.ellipse(sx,by-2,18,5,0,0,7); ctx.fill(); }
   let st=P.state; if(P.aim>0)st='idle';
   const blink=P.inv>0 && Math.floor(time*20)%2===0;
   drawB(frameImg(st,P.anim),sx,by,SCALE.run,P.face<0,blink?0.35:1,P.hurtAnim>0?'rgba(255,80,80,0.4)':null);
@@ -702,7 +705,7 @@ function selectMenu(i){ menuSel=i;
   else if(i===1){ go(GS.SELECT); }
   else if(i===2){ go(GS.BESTIARY); }
   else if(i===3){ go(GS.HOWTO); }
-  else if(i===4){ AUD.muted=!AUD.muted; } }
+  else if(i===4){ toggleSound(); } }
 
 // ---- SELEÇÃO DE BIOMA ----
 function drawSelect(){ menuBackdrop(); center('SELECIONAR BIOMA',64,22,'#ffe27a');
@@ -788,7 +791,7 @@ function drawPause(){ render(); dim(0.62); center('⏸ PAUSADO',150,24,'#fff');
   const w=320,x=VW/2-w/2; let y=210;
   if(button('CONTINUAR',x,y,w,46,pauseSel===0)) go(GS.PLAY); y+=58;
   if(button('RECOMEÇAR FASE',x,y,w,46,pauseSel===1)){ loadPhase(curBiome); go(GS.PLAY); } y+=58;
-  if(button((AUD.muted?'🔇 SOM: OFF':'🔊 SOM: ON'),x,y,w,46,pauseSel===2)) AUD.muted=!AUD.muted; y+=58;
+  if(button((AUD.muted?'🔇 SOM: OFF':'🔊 SOM: ON'),x,y,w,46,pauseSel===2)) toggleSound(); y+=58;
   if(button('MENU PRINCIPAL',x,y,w,46,pauseSel===3)) go(GS.MENU);
 }
 // ---- OVER ----
@@ -813,7 +816,6 @@ function drawGameWin(){ menuBackdrop(); dim(0.2);
   const onca=isCaught('pantanal',2);
   center(onca?'★ Conquista: GUARDIÃO SUPREMO ★':'Dica: ache a Onça-Pintada p/ "Guardião Supremo"',224, onca?13:10, onca?'#ffd24a':'#9bb585');
   center('Animais catalogados: '+totalCaught()+' / 12',262,12,'#fff');
-  if(ready) drawB(frameImg('idle',time),VW/2,VH/2+150,3.0,false);
   const w=320,x=VW/2-w/2,y=330;
   if(button('VOLTAR AO MENU',x,y,w,46,true)) go(GS.MENU);
 }
@@ -821,7 +823,7 @@ function drawGameWin(){ menuBackdrop(); dim(0.2);
 // ============================ FLUXO ============================
 function go(s){ state=s; mClick=false; }
 function handleEdge(k){
-  if(k==='mute'){ AUD.muted=!AUD.muted; return; }
+  if(k==='mute'){ toggleSound(); return; }
   if(state===GS.TITLE){ if(k==='enter'||k==='jump') go(GS.MENU); return; }
   if(state===GS.MENU){ if(k==='up')menuSel=(menuSel+4)%5; else if(k==='down')menuSel=(menuSel+1)%5; else if(k==='enter')selectMenu(menuSel); else if(k==='back')go(GS.TITLE); return; }
   if(state===GS.SELECT){ if(k==='left')biomeSel=(biomeSel+3)%4; else if(k==='right')biomeSel=(biomeSel+1)%4; else if(k==='enter'){ if(biomeSel<progress.unlocked)startBiome(biomeSel); } else if(k==='back'||k==='pause')go(GS.MENU); return; }
@@ -829,7 +831,7 @@ function handleEdge(k){
   if(state===GS.PLAY){ if(k==='pause'){ pauseSel=0; state=GS.PAUSE; } return; }
   if(state===GS.PAUSE){ if(k==='up')pauseSel=(pauseSel+3)%4; else if(k==='down')pauseSel=(pauseSel+1)%4;
     else if(k==='pause')go(GS.PLAY);
-    else if(k==='enter'){ if(pauseSel===0)go(GS.PLAY); else if(pauseSel===1){loadPhase(curBiome);go(GS.PLAY);} else if(pauseSel===2)AUD.muted=!AUD.muted; else go(GS.MENU); } return; }
+    else if(k==='enter'){ if(pauseSel===0)go(GS.PLAY); else if(pauseSel===1){loadPhase(curBiome);go(GS.PLAY);} else if(pauseSel===2)toggleSound(); else go(GS.MENU); } return; }
   if(state===GS.OVER){ if(k==='up'||k==='down')overSel=overSel?0:1; else if(k==='enter'){ if(overSel===0){loadPhase(curBiome);go(GS.PLAY);} else go(GS.MENU); } return; }
   if(state===GS.PHASEWIN){ const hasNext=curBiome+1<BIOME_IDS.length; const n=hasNext?3:2;
     if(k==='up')winSel=(winSel+n-1)%n; else if(k==='down')winSel=(winSel+1)%n;
@@ -850,6 +852,15 @@ function sfx(type){ if(!AUD.ctx||AUD.muted)return; const c=AUD.ctx,t=c.currentTi
   else if(type==='win'){f0=520;f1=1040;d=0.5;ty='triangle';vol=0.18;}
   o.type=ty; o.frequency.setValueAtTime(f0,t); o.frequency.exponentialRampToValueAtTime(Math.max(40,f1),t+d);
   g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.001,t+d); o.start(t); o.stop(t+d+0.02); }
+
+// ---------- Música de fundo (uma única trilha para o jogo todo) ----------
+const MUSIC_SRC='assets/audio/music/game_sound.mp3';
+const MUSIC={ el:null, vol:0.35,
+  start(){ if(this.el) return; const a=new Audio(MUSIC_SRC); a.loop=true; a.volume=AUD.muted?0:this.vol;
+    a.play().catch(()=>{}); this.el=a; },
+  setMuted(m){ if(this.el) this.el.volume=m?0:this.vol; }
+};
+function toggleSound(){ AUD.muted=!AUD.muted; MUSIC.setMuted(AUD.muted); }
 
 // ============================ LOOP (timestep fixo) ============================
 let last=0, acc=0; const STEP=1/60;

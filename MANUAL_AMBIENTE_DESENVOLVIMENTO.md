@@ -48,7 +48,8 @@ Antes de iniciarmos o processo de instalação propriamente dito, achamos import
 | CSS3 | — | Estilização visual, animações de tela |
 | JavaScript (ES6+) | — | Lógica do jogo, física, áudio e dados |
 | Canvas API | — | Renderização 2D dos personagens e cenários |
-| Web Audio API | — | Geração procedural de sons e música |
+| Web Audio API | — | Geração procedural dos efeitos sonoros |
+| HTML5 Audio | — | Reprodução da música de fundo (arquivo MP3) |
 | localStorage | — | Salvamento automático do progresso |
 | Google Fonts | — | Tipografia pixel-art (Press Start 2P, VT323) |
 | Git | 2.x | Controle de versão e colaboração em equipe |
@@ -273,15 +274,14 @@ Após abrir o projeto, o painel esquerdo do VS Code exibirá a seguinte estrutur
 
 ```
 Jogo-Guardioes-da-Fauna/
-├── index.html          ← Ponto de entrada do jogo
-├── css/
-│   └── style.css       ← Todos os estilos visuais
-├── js/
-│   ├── main.js         ← Orquestrador geral do jogo
-│   ├── game.js         ← Motor do jogo (física e colisões)
-│   ├── audio.js        ← Sistema de áudio procedural
-│   └── data.js         ← Dados dos animais, fases e biomas
-└── assets/             ← Pasta de assets (sprites embutidos no código)
+├── guardioes_fase1.html   ← Ponto de entrada do jogo (HTML + CSS + JS em um único arquivo)
+├── GDD_Guardioes_da_Fauna.pdf   ← Documento de design do jogo
+└── assets/
+    ├── bg/                ← Imagens de fundo originais (fonte dos sprites em base64)
+    ├── sprites/            ← Sprites originais dos personagens e inimigos
+    └── audio/
+        └── music/
+            └── game_sound.mp3   ← Trilha sonora tocada em loop durante o jogo
 ```
 
 ---
@@ -293,20 +293,19 @@ Esta é, sem dúvida, a etapa mais simples do processo. Por ser desenvolvido com
 ### 7.1 Forma mais simples — Abrir o arquivo HTML diretamente
 
 1. No Explorador de Arquivos do seu sistema operacional (não o do VS Code), navegue até a pasta do projeto
-2. Dê um duplo clique no arquivo **`index.html`**
+2. Dê um duplo clique no arquivo **`guardioes_fase1.html`**
 3. O arquivo será aberto automaticamente no navegador padrão do sistema
 4. O jogo iniciará imediatamente
 
-> **Atenção:** Esta forma é suficiente para jogar e visualizar o jogo. No entanto, em alguns casos, o navegador pode bloquear o carregamento de recursos locais por questões de segurança (política CORS). Se isso acontecer, a tela do jogo pode não aparecer corretamente. Neste caso, recomendamos utilizar um servidor local, conforme descrito na próxima etapa.
+> **Atenção:** Esta forma é suficiente para jogar e visualizar o jogo. No entanto, em alguns casos, o navegador pode bloquear o carregamento da trilha sonora (`assets/audio/music/game_sound.mp3`) por questões de segurança ao abrir o arquivo diretamente pelo sistema (protocolo `file://`). Se isso acontecer, o restante do jogo funciona normalmente, apenas sem música de fundo. Neste caso, recomendamos utilizar um servidor local, conforme descrito na próxima etapa.
 
 ### 7.2 Testando se o jogo está funcionando
 
-Ao abrir o `index.html` no navegador, você deverá ver:
+Ao abrir o `guardioes_fase1.html` no navegador, você deverá ver:
 
-- A tela inicial do jogo com o título **"GUARDIÕES da FAUNA"** em letras pixel-art
-- Uma animação de fundo com estrelas e vagalumes
-- Três botões: **INICIAR JOGO**, **ANIMAIS** e **OPÇÕES**
-- Personagens animados na tela (Leo, onça-pintada e lobo-guará)
+- A tela de título com o nome **"GUARDIÕES DA FAUNA"**
+- Ao avançar, o menu principal com as opções **JOGAR**, **SELECIONAR BIOMA**, **BESTIÁRIO**, **COMO JOGAR** e **SOM**
+- Léo, o personagem principal, animado na tela
 
 Se a tela aparecer em branco ou os botões não responderem, consulte a seção de [Solução de Problemas](#10-solução-de-problemas-comuns).
 
@@ -326,7 +325,7 @@ Esta é a alternativa que utilizamos durante o desenvolvimento por ser extremame
 3. Clique em **"Instalar"** na extensão de Ritwick Dey
 
 **Execução:**
-1. Com o projeto aberto no VS Code, clique com o botão direito sobre o arquivo `index.html` no painel de arquivos
+1. Com o projeto aberto no VS Code, clique com o botão direito sobre o arquivo `guardioes_fase1.html` no painel de arquivos
 2. Selecione **"Open with Live Server"**
 3. O navegador abrirá automaticamente em `http://127.0.0.1:5500`
 4. O jogo estará rodando normalmente
@@ -376,54 +375,32 @@ http-server -p 8080
 
 ## 9. Estrutura do Projeto e Responsabilidade dos Arquivos
 
-Para que seja possível analisar e compreender o código, apresentamos aqui uma descrição detalhada de cada arquivo e sua função dentro do projeto. Esta organização modular foi uma decisão arquitetural intencional da equipe para facilitar a manutenção e divisão de responsabilidades.
+Para que seja possível analisar e compreender o código, apresentamos aqui uma descrição detalhada de cada arquivo e sua função dentro do projeto.
 
-### `index.html` — Ponto de Entrada
+### `guardioes_fase1.html` — Ponto de Entrada Único
 
-Este arquivo contém toda a estrutura HTML do jogo. Nele estão definidas as diversas telas do jogo como elementos `<div>`: tela inicial, seleção de bioma, gameplay, pausa, bestiário, opções e tela de game over. O arquivo também carrega os arquivos JavaScript e CSS.
+O jogo inteiro (HTML, CSS e JavaScript) está neste único arquivo, sem dependências externas de build ou bibliotecas. Ele contém:
 
-Todas as telas existem no HTML desde o início, mas apenas uma é visível por vez — o controle de qual tela exibir é feito pelo JavaScript através da manipulação de classes CSS.
+- A estrutura HTML mínima (apenas o elemento `<canvas>` onde o jogo é desenhado)
+- Os estilos CSS da página
+- Os sprites e fundos dos personagens e biomas, codificados em base64 diretamente no arquivo (por isso o arquivo é grande)
+- Toda a lógica do jogo em JavaScript, organizada em blocos:
+  - **Dados** dos animais do bestiário e dos biomas
+  - **Construção das 4 fases** (`buildMata`, `buildAmazonia`, `buildCerrado`, `buildPantanal`) — plataformas, água, cipós, inimigos e animais de cada bioma
+  - **Física e controle do jogador** (movimento, pulo duplo, natação, escalada de cipó)
+  - **Inimigos** (robôs de patrulha, drones, piranhas e o chefe final) e seus comportamentos
+  - **Loop principal** do jogo (atualização e renderização via Canvas a 60 FPS, com timestep fixo)
+  - **Telas e menus** (título, menu principal, seleção de bioma, bestiário, pausa, game over, vitória)
+  - **Áudio**: efeitos sonoros gerados por síntese via Web Audio API (pulo, coleta, dano, vitória etc.) e uma trilha de música de fundo tocada em loop via `<audio>`
 
-### `css/style.css` — Estilos Visuais
+### `assets/` — Recursos do Jogo
 
-Contém toda a estilização do jogo: layout das telas, efeitos visuais dos menus, animações CSS (estrelas piscando, vagalumes voando, personagens animados na tela inicial), configurações de tipografia pixel-art e adaptações para diferentes tamanhos de tela.
+- `assets/bg/` e `assets/sprites/` guardam as imagens originais que foram convertidas para base64 e embutidas no HTML.
+- `assets/audio/music/game_sound.mp3` é a música de fundo, carregada em tempo de execução e tocada em loop contínuo assim que o jogador interage pela primeira vez com o teclado ou o mouse (os navegadores exigem essa interação antes de permitir áudio automático).
 
-### `js/data.js` — Dados do Jogo
+### `GDD_Guardioes_da_Fauna.pdf` — Documento de Design do Jogo
 
-Este é o arquivo de configuração central do jogo. Nele estão definidos em JavaScript puro:
-- Os **20 animais** distribuídos pelos 4 biomas, com seus nomes científicos, populares, status de conservação e curiosidades
-- Os **4 biomas** (Mata Atlântica, Amazônia, Cerrado e Pantanal) com suas configurações visuais
-- Os **5 tipos de robôs inimigos** e seus atributos (velocidade, pontos de vida, comportamento)
-- O **design dos níveis** com posicionamento de plataformas, obstáculos e animais
-- O **estado padrão do salvamento** (`DEFAULT_SAVE`)
-
-### `js/audio.js` — Sistema de Áudio Procedural
-
-Talvez o arquivo mais técnico do projeto. Todo o sistema sonoro do jogo foi construído sem nenhum arquivo de áudio externo (sem MP3, WAV ou OGG). Os sons são gerados programaticamente em tempo real utilizando a **Web Audio API** do navegador através de síntese de formas de onda (senoidal, quadrada, triangular, dente-de-serra) e geração de ruído branco.
-
-O arquivo contém funções para gerar:
-- **12 efeitos sonoros** (pulo, coleta de animal, disparo do binóculo, dano, morte de robô, etc.)
-- **Músicas de fundo** características para cada bioma
-
-### `js/game.js` — Motor do Jogo
-
-O coração do jogo. Este arquivo implementa:
-- O **loop principal** do jogo (atualização de física e renderização via Canvas a 60 FPS)
-- O **sistema de física** (gravidade, velocidade, aceleração, detecção e resolução de colisões)
-- O **comportamento dos inimigos** (patrulha, perseguição, ataque)
-- A **renderização** de todos os elementos visuais no Canvas (personagens, plataformas, HUD)
-- O **sistema de animações** dos sprites
-- Os **comportamentos especiais** (nadar, escalar, duplo salto)
-
-### `js/main.js` — Orquestrador
-
-Responsável por coordenar todas as partes do jogo:
-- **Gerenciamento de telas** (qual tela exibir em cada momento)
-- **Sistema de salvamento** (leitura e escrita no localStorage)
-- **Processamento de entrada** do teclado e mouse
-- **Cutscenes** de introdução a cada bioma
-- **Interface do HUD** (barra de vida, contagem de animais, pontuação)
-- **Bestiário** (enciclopédia dos animais desbloqueados)
+Descreve a concepção do jogo: narrativa, biomas, animais, mecânicas e objetivos educativos.
 
 ---
 
@@ -435,7 +412,7 @@ Listamos aqui os problemas que encontramos durante o desenvolvimento e como reso
 
 **Causa mais comum:** O navegador está bloqueando o carregamento de recursos locais (política CORS ao abrir arquivos diretamente pelo sistema de arquivos).
 
-**Solução:** Utilize um servidor local conforme descrito na Etapa 6. A alternativa mais simples é instalar a extensão **Live Server** no VS Code e clicar com o botão direito em `index.html` → **"Open with Live Server"**.
+**Solução:** Utilize um servidor local conforme descrito na Etapa 6. A alternativa mais simples é instalar a extensão **Live Server** no VS Code e clicar com o botão direito em `guardioes_fase1.html` → **"Open with Live Server"**.
 
 ---
 
@@ -443,7 +420,7 @@ Listamos aqui os problemas que encontramos durante o desenvolvimento e como reso
 
 **Causa:** A maioria dos navegadores modernos bloqueia a reprodução automática de áudio por padrão até que o usuário interaja com a página.
 
-**Solução:** Clique em qualquer botão da tela inicial para iniciar a interação. O áudio será ativado automaticamente após o primeiro clique.
+**Solução:** Pressione qualquer tecla ou clique na tela de título. Efeitos sonoros e a música de fundo são liberados automaticamente após essa primeira interação.
 
 ---
 
