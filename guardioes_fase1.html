@@ -271,7 +271,7 @@ function loadPhase(b){
 }
 
 function buildMata(){
-  levelW=5200; exitX=4980;
+  levelW=10580; exitX=10360;
   ground(-40,1240); ground(1330,1170);
   water.push({x:2500,y:GROUND-6,w:820,h:240}); plats.push({x:2500,y:GROUND+120,w:820,h:160,ground:true});
   ground(3320,1180); ground(4620,720);
@@ -280,15 +280,28 @@ function buildMata(){
   branch(4150,300,140); branch(4760,250,150);
   vines.push({x:1035,y0:150,y1:GROUND}); vines.push({x:1545,y0:300,y1:GROUND});
   vines.push({x:3585,y0:300,y1:GROUND}); vines.push({x:4220,y0:300,y1:GROUND});
-  pushAnimal('mata',1,545,330); pushAnimal('mata',2,1565,300); pushAnimal('mata',0,1085,150);
+  pushAnimal('mata',1,545,330); pushAnimal('mata',2,6945,300); pushAnimal('mata',0,10215,250);
   enemies.push(new Patrol(360,250,560)); enemies.push(new Drone(880,760,1020));
   enemies.push(new Patrol(1880,1700,2160)); enemies.push(new Heavy(2360));
   plats.push({x:2300,y:GROUND-260,w:30,h:120,wall:true}); plats.push({x:2470,y:GROUND-260,w:30,h:120,wall:true});
   enemies.push(new Piranha(2620,3260)); enemies.push(new Drone(3760,3520,4040)); enemies.push(new Patrol(4660,4640,5060));
+
+  ground(5340,1240); ground(6710,1170);
+  water.push({x:7880,y:GROUND-6,w:820,h:240}); plats.push({x:7880,y:GROUND+120,w:820,h:160,ground:true});
+  ground(8700,1180); ground(10000,720);
+  branch(5850,330,150); branch(5630,250,120); branch(6200,210,150); branch(6400,150,140);
+  branch(6880,300,130); branch(7140,250,120); branch(8900,300,140); branch(9140,210,150);
+  branch(9530,300,140); branch(10140,250,150);
+  vines.push({x:6415,y0:150,y1:GROUND}); vines.push({x:6925,y0:300,y1:GROUND});
+  vines.push({x:8965,y0:300,y1:GROUND}); vines.push({x:9600,y0:300,y1:GROUND});
+  enemies.push(new Patrol(5740,5630,5940)); enemies.push(new Drone(6260,6140,6400));
+  enemies.push(new Patrol(7260,7080,7540)); enemies.push(new Heavy(7740));
+  plats.push({x:7680,y:GROUND-260,w:30,h:120,wall:true}); plats.push({x:7850,y:GROUND-260,w:30,h:120,wall:true});
+  enemies.push(new Piranha(8000,8640)); enemies.push(new Drone(9140,8900,9420)); enemies.push(new Patrol(10040,10020,10440));
 }
 
 function buildAmazonia(){
-  levelW=5400; exitX=5180;
+  levelW=10900; exitX=10660;
   ground(-40,940);
   water.push({x:900,y:GROUND-6,w:1700,h:300}); plats.push({x:900,y:GROUND+160,w:1700,h:140,ground:true});
   ground(2600,500);
@@ -297,15 +310,28 @@ function buildAmazonia(){
   [1080,1360,1640,1960,2260, 3300,3600,3900,4200].forEach(x=>lilies.push({x,y:GROUND-10,w:96,h:18,baseY:GROUND-10,sink:0}));
   branch(640,300,140); branch(2760,300,150); branch(4700,260,150); branch(4980,200,150);
   vines.push({x:680,y0:300,y1:GROUND}); vines.push({x:4740,y0:260,y1:GROUND});
-  pushAnimal('amazonia',2,5010,200); pushAnimal('amazonia',1,1750,GROUND+120); pushAnimal('amazonia',0,3800,GROUND+120);
+  pushAnimal('amazonia',1,1750,GROUND+120); pushAnimal('amazonia',0,9280,GROUND+120); pushAnimal('amazonia',2,10490,200);
   enemies.push(new Piranha(1000,2500)); enemies.push(new Piranha(1300,2400));
   enemies.push(new Drone(1700,1100,2400)); enemies.push(new Piranha(3200,4400));
   enemies.push(new Piranha(3500,4400)); enemies.push(new Drone(3900,3200,4400));
   enemies.push(new Heavy(4600)); enemies.push(new Patrol(4900,4560,5120));
+
+  ground(5440,940);
+  water.push({x:6380,y:GROUND-6,w:1700,h:300}); plats.push({x:6380,y:GROUND+160,w:1700,h:140,ground:true});
+  ground(8080,500);
+  water.push({x:8580,y:GROUND-6,w:1400,h:300}); plats.push({x:8580,y:GROUND+160,w:1400,h:140,ground:true});
+  ground(9980,940);
+  [6560,6840,7120,7440,7740, 8780,9080,9380,9680].forEach(x=>lilies.push({x,y:GROUND-10,w:96,h:18,baseY:GROUND-10,sink:0}));
+  branch(6120,300,140); branch(8240,300,150); branch(10180,260,150); branch(10460,200,150);
+  vines.push({x:6160,y0:300,y1:GROUND}); vines.push({x:10220,y0:260,y1:GROUND});
+  enemies.push(new Piranha(6480,7980)); enemies.push(new Piranha(6780,7880));
+  enemies.push(new Drone(7180,6580,7880)); enemies.push(new Piranha(8680,9880));
+  enemies.push(new Piranha(8980,9880)); enemies.push(new Drone(9380,8680,9880));
+  enemies.push(new Heavy(10080)); enemies.push(new Patrol(10380,10040,10600));
 }
 
 function buildCerrado(){
-  levelW=5200; exitX=4980;
+  levelW=10440; exitX=10220;
   ground(-40,1600); ground(1700,1500); ground(3300,1900);
   branch(560,320,130); branch(900,250,120); branch(1300,300,130);
   branch(2100,300,140); branch(2500,230,130); branch(3700,300,140); branch(4300,250,140);
@@ -315,28 +341,51 @@ function buildCerrado(){
   hazards.push({x:3050,y:GROUND-70,w:90,h:70,period:2.4,off:1.2,on:false,ph:1.8});
   hazards.push({x:4100,y:GROUND-70,w:90,h:70,period:2.0,off:1.0,on:true});
   pushAnimal('cerrado',2,820,GROUND-44);
-  pushAnimal('cerrado',1,2350,GROUND-40);
-  pushAnimal('cerrado',0,4500,GROUND-46);
+  pushAnimal('cerrado',1,7590,GROUND-40);
+  pushAnimal('cerrado',0,9740,GROUND-46);
   enemies.push(new Patrol(450,300,700)); enemies.push(new Drone(1000,760,1300));
   enemies.push(new Heavy(1500)); enemies.push(new Patrol(2000,1750,2300));
   enemies.push(new Drone(2900,2600,3200)); enemies.push(new Heavy(3500));
   enemies.push(new Patrol(4000,3700,4300));
+
+  ground(5200,1600); ground(6940,1500); ground(8540,1900);
+  branch(5800,320,130); branch(6140,250,120); branch(6540,300,130);
+  branch(7340,300,140); branch(7740,230,130); branch(8940,300,140); branch(9540,250,140);
+  vines.push({x:6570,y0:300,y1:GROUND});
+  hazards.push({x:6420,y:GROUND-70,w:90,h:70,period:0,on:true});
+  hazards.push({x:7990,y:GROUND-70,w:90,h:70,period:2.4,off:1.2,on:true});
+  hazards.push({x:8290,y:GROUND-70,w:90,h:70,period:2.4,off:1.2,on:false,ph:1.8});
+  hazards.push({x:9340,y:GROUND-70,w:90,h:70,period:2.0,off:1.0,on:true});
+  enemies.push(new Patrol(5690,5540,5940)); enemies.push(new Drone(6240,6000,6540));
+  enemies.push(new Heavy(6740)); enemies.push(new Patrol(7240,6990,7540));
+  enemies.push(new Drone(8140,7840,8440)); enemies.push(new Heavy(8740));
+  enemies.push(new Patrol(9240,8940,9540));
 }
 
 function buildPantanal(){
-  levelW=5600; exitX=5450;
+  levelW=8940; exitX=8790;
   ground(-40,1540);
   water.push({x:1500,y:GROUND-6,w:900,h:300}); plats.push({x:1500,y:GROUND+160,w:900,h:140,ground:true});
   ground(2400,900);
   [1620,1860,2120].forEach(x=>lilies.push({x,y:GROUND-10,w:96,h:18,baseY:GROUND-10,sink:0}));
-  ground(3300,2300);
-  branch(560,300,130); branch(900,230,120); branch(3000,300,140);
+  branch(560,300,130); branch(900,230,120);
   vines.push({x:600,y0:300,y1:GROUND});
-  pushAnimal('pantanal',0,940,210); pushAnimal('pantanal',1,2700,GROUND-40); pushAnimal('pantanal',2,3150,GROUND-40);
+  pushAnimal('pantanal',0,940,210); pushAnimal('pantanal',1,6040,GROUND-40); pushAnimal('pantanal',2,7200,GROUND-40);
   enemies.push(new Patrol(450,300,700)); enemies.push(new Drone(1100,800,1400));
-  enemies.push(new Piranha(1600,2300)); enemies.push(new Patrol(2600,2450,2850));
-  boss = new BossAlfa(4900); enemies.push(boss);
-  plats.push({x:3300,y:GROUND-320,w:30,h:160,wall:true});
+  enemies.push(new Piranha(1600,2300));
+
+  ground(3300,1540);
+  water.push({x:4840,y:GROUND-6,w:900,h:300}); plats.push({x:4840,y:GROUND+160,w:900,h:140,ground:true});
+  ground(5740,900);
+  [4960,5200,5460].forEach(x=>lilies.push({x,y:GROUND-10,w:96,h:18,baseY:GROUND-10,sink:0}));
+  branch(3900,300,130); branch(4240,230,120); branch(6340,300,140);
+  vines.push({x:3940,y0:300,y1:GROUND});
+  enemies.push(new Patrol(3790,3640,4040)); enemies.push(new Drone(4440,4140,4740));
+  enemies.push(new Piranha(4940,5640)); enemies.push(new Patrol(5940,5790,6190));
+
+  ground(6640,2300);
+  plats.push({x:6640,y:GROUND-320,w:30,h:160,wall:true});
+  boss = new BossAlfa(8240); enemies.push(boss);
 }
 
 // ============================ JOGADOR ============================
@@ -358,11 +407,17 @@ function solidsCollideY(){ P.onGround=false;
     if(P.vy>=0 && rectsOverlap(P,SR) && (P.y+P.h-P.vy*STEP)<=l.y+8){ P.y=l.y-P.h; P.onGround=true; P.jumps=0; P.vy=0; l.standing=true; } } }
 
 function updatePlayer(dt){
+  const jumpPressed=pressed.jump, binocPressed=pressed.binoc, catalogPressed=pressed.catalog;
+  pressed.jump=false; pressed.binoc=false; pressed.catalog=false;
   if(P.inv>0)P.inv-=dt; if(P.slow>0)P.slow-=dt; if(P.binoCd>0)P.binoCd-=dt; if(P.aim>0)P.aim-=dt; if(P.hurtAnim>0)P.hurtAnim-=dt; if(P.vineCd>0)P.vineCd-=dt;
   const spdMul=P.slow>0?0.5:1;
-  if(pressed.binoc && P.binoCd<=0 && !P.dead){ P.aim=0.32; P.binoCd=0.55; fireBinoc(); sfx('zap'); }
+  if(binocPressed && P.binoCd<=0 && !P.dead){ P.aim=0.32; P.binoCd=0.55; fireBinoc(); sfx('zap'); }
 
+  const wasSwimming=P.swimming;
   P.swimming=!!inWater();
+  if(wasSwimming && !P.swimming){
+    for(const p of plats){ if(p.ground && rectsOverlap(P,p)){ P.y=p.y-P.h; P.vy=0; } }
+  }
   const vine=nearVine();
   if(vine && (keys.up||keys.down) && !P.swimming && P.vineCd<=0) P.climbing=true;
   if(!vine) P.climbing=false;
@@ -382,8 +437,9 @@ function updatePlayer(dt){
     P.vx=0;P.vy=0;
     if(keys.up)P.y-=130*dt; if(keys.down)P.y+=130*dt;
     P.x=vine.x-P.w/2; if(P.y<vine.y0-10)P.y=vine.y0-10; P.state='idle';
-    if(pressed.jump){ P.climbing=false; P.vineCd=0.35; P.jumps=1; P.vy=-JUMP*0.8;
-      const dir=keys.left?-1:(keys.right?1:P.face); P.vx=dir*220; P.face=dir; sfx('jump'); }
+    if(jumpPressed){ P.climbing=false; P.vineCd=0.35; P.jumps=1; P.vy=-JUMP*0.85;
+      if(keys.left){P.vx=-190;P.face=-1;} else if(keys.right){P.vx=190;P.face=1;} else P.vx=0;
+      sfx('jump'); }
   } else {
     let ax=0; if(keys.left){ax=-1;P.face=-1;} if(keys.right){ax=1;P.face=1;}
     const acc=P.onGround?SPD:AIR; P.vx+=ax*acc*8*dt;
@@ -391,7 +447,7 @@ function updatePlayer(dt){
     if(ax===0)P.vx*=P.onGround?0.7:0.92;
     P.vy+=GRAV*dt; if(P.vy>MAXFALL)P.vy=MAXFALL;
     if(P.onGround)P.coyote=0.1; else P.coyote-=dt;
-    if(pressed.jump){
+    if(jumpPressed){
       if(P.onGround||P.coyote>0){ P.vy=-JUMP; P.jumps=1; P.coyote=0; sfx('jump'); }
       else if(P.jumps<2){ P.vy=-JUMP*0.92; P.jumps=2; sfx('jump'); fx.push(mkPuff(P.x+P.w/2,P.y+P.h)); }
     }
@@ -403,7 +459,7 @@ function updatePlayer(dt){
   for(const l of lilies){ if(l.standing){ l.sink=Math.min(1,l.sink+dt*0.7); } else { l.sink=Math.max(0,l.sink-dt*1.3); } l.y=l.baseY + l.sink*60; }
   for(const h of hazards){ if(h.on){ SR.x=h.x;SR.y=h.y;SR.w=h.w;SR.h=h.h; if(rectsOverlap(P,SR)) hurt(1,true); } }
 
-  if(pressed.catalog) tryCatalog();
+  if(catalogPressed) tryCatalog();
   if(P.y>DEATH_Y) hurt(1,0,true);
   if(P.x>levelW*0.32 && checkpoint.x<levelW*0.3){ checkpoint={x:P.x|0,y:GROUND-64}; flash('✓ CHECKPOINT'); }
   P.anim+=dt;
@@ -424,7 +480,7 @@ function fireBinoc(){
   for(const e of enemies){ if(!e.active) continue;
     const dx=(e.cx()-ox)*P.face; if(dx<0||dx>beam.len) continue;
     const dy=Math.abs(e.cy()-oy); const spread=30+dx*0.22;
-    if(dy<spread){ if(e.kind==='boss') e.zap(); else { e.disable(); flash('🔆 ROBÔ DESATIVADO'); } } }
+    if(dy<spread){ if(e.kind==='boss') e.zap(); else { const dead=e.disable(); flash(dead?'🔆 ROBÔ DESATIVADO':'💥 Robô atingido!'); } } }
 }
 
 // ---------- Catalogar (não bloqueia) ----------
@@ -454,7 +510,7 @@ class Enemy{ constructor(x,y,w,h){ this.x=x;this.y=y;this.w=w;this.h=h;this.acti
   hitsPlayer(){ if(!this.active) return false; SR.x=this.x;SR.y=this.y;SR.w=this.w;SR.h=this.h; return rectsOverlap(P,SR); }
   onCam(){ return this.cx()-camX>-140 && this.cx()-camX<VW+140; } }
 
-class Patrol extends Enemy{ constructor(x,x0,x1){ super(x,GROUND-44,46,44); this.x0=x0;this.x1=x1;this.spd=58;this.attk=0;this.cd=0;this.kind='patrol'; }
+class Patrol extends Enemy{ constructor(x,x0,x1){ super(x,GROUND-44,46,44); this.x0=x0;this.x1=x1;this.spd=58;this.attk=0;this.cd=0;this.kind='patrol';this.hp=3; }
   update(dt){ this.t+=dt; if(this.cd>0)this.cd-=dt;
     if(!this.active){ this.dis+=dt; return; }
     const near=Math.abs(P.x+P.w/2-this.cx())<86 && Math.abs(P.y-this.y)<70;
@@ -468,9 +524,10 @@ class Patrol extends Enemy{ constructor(x,x0,x1){ super(x,GROUND-44,46,44); this
       drawB(frameImg('hit',Math.min(this.dis,0.4)),sx,by,SCALE.hit,this.face<0,alpha,null,rot); return; }
     if(this.state==='claw') drawB(frameImg('claw',0.32-this.attk),sx,by,SCALE.claw,this.face<0);
     else drawB(frameImg('patrol',this.t),sx,by,SCALE.patrol,this.face<0); }
-  disable(){ this.active=false; this.dis=0; shake=6; fx.push(mkSpark(this.cx(),this.cy())); } }
+  disable(){ this.hp--; if(this.hp>0){ shake=4; sfx('hurt'); fx.push(mkSpark(this.cx(),this.cy())); return false; }
+    this.active=false; this.dis=0; shake=6; fx.push(mkSpark(this.cx(),this.cy())); return true; } }
 
-class Drone extends Enemy{ constructor(x,x0,x1){ super(x,200,56,26); this.x0=x0;this.x1=x1;this.baseY=205;this.spd=46;this.drop=2.2;this.kind='drone'; }
+class Drone extends Enemy{ constructor(x,x0,x1){ super(x,GROUND-210,56,26); this.x0=x0;this.x1=x1;this.baseY=GROUND-205;this.spd=46;this.drop=2.2;this.kind='drone';this.hp=3; }
   update(dt){ this.t+=dt;
     if(!this.active){ this.y+=260*dt; if(this.y>GROUND-26)this.y=GROUND-26; return; }
     this.x+=this.spd*this.face*dt; if(this.x<this.x0){this.x=this.x0;this.face=1;} if(this.x>this.x1){this.x=this.x1;this.face=-1;}
@@ -478,9 +535,10 @@ class Drone extends Enemy{ constructor(x,x0,x1){ super(x,200,56,26); this.x0=x0;
     if(this.drop<=0 && Math.abs(P.x+P.w/2-this.cx())<260){ this.drop=2.8; shots.push({type:'net',x:this.cx(),y:this.y+10,vy:140,t:4}); }
     if(this.hitsPlayer()) hurt(1,true); }
   draw(){ if(!this.onCam())return; drawCc(frameImg('drone',this.t),this.cx()-camX,this.cy()-camY,SCALE.drone,this.face<0,1,null); }
-  disable(){ this.active=false; shake=5; fx.push(mkSpark(this.cx(),this.cy())); } }
+  disable(){ this.hp--; if(this.hp>0){ shake=4; sfx('hurt'); fx.push(mkSpark(this.cx(),this.cy())); return false; }
+    this.active=false; shake=5; fx.push(mkSpark(this.cx(),this.cy())); return true; } }
 
-class Heavy extends Enemy{ constructor(x){ super(x,GROUND-120,70,120); this.face=-1;this.cd=2.6;this.thr=0;this.kind='heavy';this.expl=0; }
+class Heavy extends Enemy{ constructor(x){ super(x,GROUND-120,70,120); this.face=-1;this.cd=2.6;this.thr=0;this.kind='heavy';this.expl=0;this.hp=3; }
   update(dt){ this.t+=dt;
     if(!this.active){ if(this.expl<0.7)this.expl+=dt; else this.dead=true; return; }
     this.face=(P.x>this.x)?1:-1; this.cd-=dt;
@@ -491,7 +549,8 @@ class Heavy extends Enemy{ constructor(x){ super(x,GROUND-120,70,120); this.face
     if(!this.active){ drawB(frameImg('explode',this.expl),sx,by,SCALE.explode,this.face<0); return; }
     if(this.thr>0) drawB(frameImg('throw',0.45-this.thr),sx,by,SCALE.heavy,this.face<0);
     else drawB(frameImg('heavy',this.t),sx,by,SCALE.heavy,this.face<0); }
-  disable(){ this.active=false; this.expl=0; shake=12; for(let i=0;i<10;i++)fx.push(mkSpark(this.cx()+(Math.random()-0.5)*60,this.cy()+(Math.random()-0.5)*60)); } }
+  disable(){ this.hp--; if(this.hp>0){ shake=4; sfx('hurt'); fx.push(mkSpark(this.cx(),this.cy())); return false; }
+    this.active=false; this.expl=0; shake=12; for(let i=0;i<10;i++)fx.push(mkSpark(this.cx()+(Math.random()-0.5)*60,this.cy()+(Math.random()-0.5)*60)); return true; } }
 
 class Piranha extends Enemy{ constructor(x0,x1){ super(x0,GROUND+30,80,40); this.x0=x0;this.x1=x1;this.spd=85;this.face=1;this.kind='piranha';this.baseY=GROUND+34; }
   update(dt){ this.t+=dt; if(!this.active){ this.y+=40*dt; return; }
@@ -500,10 +559,10 @@ class Piranha extends Enemy{ constructor(x0,x1){ super(x0,GROUND+30,80,40); this
     this.y=this.baseY+Math.sin(this.t*3)*14;
     if(this.hitsPlayer()){ hurt(1,true); P.vx=this.face*260; P.vy=-120; } }
   draw(){ if(!this.onCam())return; drawCc(frameImg('piranha',this.t),this.cx()-camX,this.cy()-camY,SCALE.piranha,this.face<0,1,null); }
-  disable(){ this.active=false; shake=5; fx.push(mkSpark(this.cx(),this.cy())); } }
+  disable(){ this.active=false; shake=5; fx.push(mkSpark(this.cx(),this.cy())); return true; } }
 
 // CHEFE — Robô Alfa (Pantanal). Vulnerável quando "sobrecarrega".
-class BossAlfa extends Enemy{ constructor(x){ super(x,GROUND-150,110,150); this.kind='boss'; this.face=-1; this.bhp=3;
+class BossAlfa extends Enemy{ constructor(x){ super(x,GROUND-150,110,150); this.kind='boss'; this.face=-1; this.bhp=9;
     this.phase='idle'; this.timer=2.0; this.vuln=0; this.flash=0; this.expl=null; }
   update(dt){ this.t+=dt; if(this.flash>0)this.flash-=dt;
     if(!this.active){ if(this.expl==null)this.expl=0; if(this.expl<0.9)this.expl+=dt; else this.dead=true; return; }
@@ -519,7 +578,7 @@ class BossAlfa extends Enemy{ constructor(x){ super(x,GROUND-150,110,150); this.
     if(this.hitsPlayer()){ hurt(1,true); P.vx=this.face*320; } }
   zap(){ if(this.vuln>0){ this.bhp--; this.vuln=0; this.phase='idle'; this.timer=1.2; shake=10;
       for(let i=0;i<14;i++)fx.push(mkSpark(this.cx()+(Math.random()-0.5)*80,this.cy()+(Math.random()-0.5)*80));
-      flash('💥 Núcleo atingido! ('+(3-this.bhp)+'/3)');
+      flash('💥 Núcleo atingido! ('+(9-this.bhp)+'/9)');
       if(this.bhp<=0){ this.active=false; shake=18; bossDownT=0; sfx('win'); flash('Robô Alfa desativado!'); }
     } else flash('Espere ele sobrecarregar!'); }
   draw(){ const sx=this.cx()-camX, by=this.y+this.h-camY;
@@ -530,7 +589,7 @@ class BossAlfa extends Enemy{ constructor(x){ super(x,GROUND-150,110,150); this.
     ctx.beginPath(); ctx.arc(sx,by-95,this.vuln>0?16:10,0,7); ctx.fill(); ctx.restore();
     const bw=240,bx=VW/2-bw/2,byy=92; ctx.fillStyle='rgba(0,0,0,0.5)'; rr(bx-3,byy-3,bw+6,16,5); ctx.fill();
     ctx.fillStyle='#5a1a1a'; rr(bx,byy,bw,10,4); ctx.fill();
-    ctx.fillStyle='#ff5a3a'; rr(bx,byy,bw*Math.max(0,this.bhp)/3,10,4); ctx.fill();
+    ctx.fillStyle='#ff5a3a'; rr(bx,byy,bw*Math.max(0,this.bhp)/9,10,4); ctx.fill();
     ctx.fillStyle='#ffd9d0'; ctx.font='9px "Press Start 2P",monospace'; ctx.textAlign='center'; ctx.fillText('ROBÔ ALFA',VW/2,byy-8); }
   disable(){} }
 
